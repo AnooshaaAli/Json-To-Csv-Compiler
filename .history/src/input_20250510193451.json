@@ -1,0 +1,14 @@
+{
+    "order": {
+      "orderid": 1001,
+      "customer": {
+        "name": "Alice",
+        "email": "alice@example.com"
+      },
+      "items": [
+        { "sku": "abc", "qty": 2 },
+        { "sku": "xyz", "qty": 4 }
+      ]
+    }
+  }
+  

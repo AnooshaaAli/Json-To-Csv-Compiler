@@ -1,0 +1,7 @@
+{
+    "products": [
+      { "sku": "abc", "qty": 10 },
+      { "sku": "def", "qty": 20 }
+    ]
+  }
+  
