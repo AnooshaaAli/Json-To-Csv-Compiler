@@ -75,7 +75,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
         Row* row = (Row*)malloc(sizeof(Row));
         if (row == NULL) {
-            // printf("Debug: Memory allocation failed for row. Exiting.\n");
+            printf("Debug: Memory allocation failed for row. Exiting.\n");
             exit(1);
         }
 
@@ -113,26 +113,26 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
         free(schemaKey);
     }
     else if (strcmp(node->type, "array") == 0) {
-        // printf("Debug: Array with %d children\n", node->childCount);
+        printf("Debug: Array with %d children\n", node->childCount);
 
         if (node->childCount == 0) {
-            // printf("Debug: Empty array, skipping processing.\n");
+            printf("Debug: Empty array, skipping processing.\n");
         } else {
             for (int i = 0; i < node->childCount; i++) {
                 ASTNode* child = node->children[i];
                 if (child == NULL) {
-                    // printf("Debug: Found NULL child at index %d in array. Skipping.\n", i);
+                    printf("Debug: Found NULL child at index %d in array. Skipping.\n", i);
                     continue;
                 }
 
-                // printf("Debug: Walking array element %d, type: %s\n", i, child->type);
+                printf("Debug: Walking array element %d, type: %s\n", i, child->type);
 
                 char* schemaKey = strdup(parentTable); 
                 Table* table = findOrCreateTable(schemaKey);
 
                 Row* row = (Row*)malloc(sizeof(Row));
                 if (row == NULL) {
-                    // printf("Debug: Memory allocation failed for row. Exiting.\n");
+                    printf("Debug: Memory allocation failed for row. Exiting.\n");
                     exit(1);
                 }
 
@@ -167,7 +167,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
 void printSymbolTables() {
     if (tableCount == 0) {
-        // printf("Debug: No tables to print!\n");
+        printf("Debug: No tables to print!\n");
     }
     for (int i = 0; i < tableCount; i++) {
         Table* table = tables[i];

@@ -11,7 +11,7 @@ char* generateSchemaKey(ASTNode* node) {
         if (node->strVal != NULL) {
             return strdup(node->strVal); 
         } else {
-            // printf("Warning: Null key in pair node\n");
+?
             return strdup("defaultKey"); 
         }
     }
@@ -43,16 +43,16 @@ void addRow(Table* t, Row* row) {
         t->rows = (Row**)realloc(t->rows, sizeof(Row*) * t->rowCap);
     }
     t->rows[t->rowCount++] = row;
-    // printf("Debug: Row added to table: %s, Row ID: %d\n", t->name, row->id); 
+    printf("Debug: Row added to table: %s, Row ID: %d\n", t->name, row->id); 
 }
 
 void walkAST(ASTNode* node, const char* parentTable, int parentId) {
     if (node == NULL || node->type == NULL) {
-        // printf("Debug: Node or node->type is NULL. Returning.\n");
+        printf("Debug: Node or node->type is NULL. Returning.\n");
         return;
     }
 
-    // printf("Debug: Walking node of type: %s\n", node->type);
+    printf("Debug: Walking node of type: %s\n", node->type);
 
     if (strcmp(node->type, "object") == 0) {
         for (int i = 0; i < node->childCount; i++) {
@@ -66,7 +66,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
     }
     else if (strcmp(node->type, "pair") == 0) {
         if (node->children == NULL || node->childCount != 1) {
-            // printf("Debug: Invalid pair. Skipping...\n");
+            printf("Debug: Invalid pair. Skipping...\n");
             return;
         }
 
@@ -75,7 +75,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
         Row* row = (Row*)malloc(sizeof(Row));
         if (row == NULL) {
-            // printf("Debug: Memory allocation failed for row. Exiting.\n");
+            printf("Debug: Memory allocation failed for row. Exiting.\n");
             exit(1);
         }
 
@@ -113,26 +113,26 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
         free(schemaKey);
     }
     else if (strcmp(node->type, "array") == 0) {
-        // printf("Debug: Array with %d children\n", node->childCount);
+        printf("Debug: Array with %d children\n", node->childCount);
 
         if (node->childCount == 0) {
-            // printf("Debug: Empty array, skipping processing.\n");
+            printf("Debug: Empty array, skipping processing.\n");
         } else {
             for (int i = 0; i < node->childCount; i++) {
                 ASTNode* child = node->children[i];
                 if (child == NULL) {
-                    // printf("Debug: Found NULL child at index %d in array. Skipping.\n", i);
+                    printf("Debug: Found NULL child at index %d in array. Skipping.\n", i);
                     continue;
                 }
 
-                // printf("Debug: Walking array element %d, type: %s\n", i, child->type);
+                printf("Debug: Walking array element %d, type: %s\n", i, child->type);
 
                 char* schemaKey = strdup(parentTable); 
                 Table* table = findOrCreateTable(schemaKey);
 
                 Row* row = (Row*)malloc(sizeof(Row));
                 if (row == NULL) {
-                    // printf("Debug: Memory allocation failed for row. Exiting.\n");
+                    printf("Debug: Memory allocation failed for row. Exiting.\n");
                     exit(1);
                 }
 
@@ -167,7 +167,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
 void printSymbolTables() {
     if (tableCount == 0) {
-        // printf("Debug: No tables to print!\n");
+        printf("Debug: No tables to print!\n");
     }
     for (int i = 0; i < tableCount; i++) {
         Table* table = tables[i];

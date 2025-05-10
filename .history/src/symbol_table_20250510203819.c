@@ -132,7 +132,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
                 Row* row = (Row*)malloc(sizeof(Row));
                 if (row == NULL) {
-                    // printf("Debug: Memory allocation failed for row. Exiting.\n");
+                    printf("Debug: Memory allocation failed for row. Exiting.\n");
                     exit(1);
                 }
 
@@ -167,7 +167,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
 
 void printSymbolTables() {
     if (tableCount == 0) {
-        // printf("Debug: No tables to print!\n");
+        printf("Debug: No tables to print!\n");
     }
     for (int i = 0; i < tableCount; i++) {
         Table* table = tables[i];
