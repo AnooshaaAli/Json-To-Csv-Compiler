@@ -20,6 +20,7 @@ char* generateSchemaKey(ASTNode* node) {
 
 Table* findOrCreateTable(const char* schemaKey) {
     for (int i = 0; i < tableCount; i++) {
+        printf("%s\n", schemaKey);
         if (strcmp(tables[i]->schemaKey, schemaKey) == 0) {
             return tables[i]; 
         }
@@ -170,7 +171,6 @@ void printSymbolTables() {
     }
     for (int i = 0; i < tableCount; i++) {
         Table* table = tables[i];
-        printf("Table: %s\n", table->name);
         for (int j = 0; j < table->rowCount; j++) {
             Row* row = table->rows[j];
             printf("  Row %d (Parent ID: %d):\n", row->id, row->parentId);

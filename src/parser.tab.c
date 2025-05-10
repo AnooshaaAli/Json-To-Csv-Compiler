@@ -1207,7 +1207,7 @@ yyreduce:
   case 17: /* elements: value  */
 #line 95 "parser.y"
             {
-        printf("Parsed value: %s\n", (yyvsp[0].ast)->strVal);
+        // printf("Parsed value: %s\n", $1->strVal);
         (yyval.ast) = createNode("elements");
         addChild((yyval.ast), (yyvsp[0].ast));
     }

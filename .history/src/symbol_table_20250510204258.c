@@ -20,6 +20,7 @@ char* generateSchemaKey(ASTNode* node) {
 
 Table* findOrCreateTable(const char* schemaKey) {
     for (int i = 0; i < tableCount; i++) {
+        printf("%s\n", schemaKey);
         if (strcmp(tables[i]->schemaKey, schemaKey) == 0) {
             return tables[i]; 
         }
