@@ -6,6 +6,7 @@
 int tableCount = 0;
 int idCounter = 0;
 
+// Helper function to report errors with context
 static void report_error(const char* message, const char* context, const char* node_type) {
     fprintf(stderr, "Error: %s (Context: %s, Node Type: %s)\n", 
             message, context ? context : "unknown", node_type ? node_type : "unknown");

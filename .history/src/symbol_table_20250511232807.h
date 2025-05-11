@@ -26,7 +26,7 @@ Table* tables[MAX_TABLES];
 extern int tableCount;
 extern int idCounter;
 
-static void report_error(const char* message, const char* context, const char* node_type);
+static void report_error(const char* message, const char* context, const char* node_type) 
 char* generateSchemaKey(ASTNode* node);
 Table* findOrCreateTable(const char* schemaKey);
 void addRow(Table* t, Row* row);

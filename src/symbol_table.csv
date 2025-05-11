@@ -1,0 +1,6 @@
+TableName,RowID,ParentID,Key,Value
+" movie ",0,0," movie "," Inception "
+" genres ",1,0," genres ","array"
+" genres ",2,1,"item"," Action "
+" genres ",3,1,"item"," Sci - Fi "
+" genres ",4,1,"item"," Thriller "
