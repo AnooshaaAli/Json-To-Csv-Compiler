@@ -1,9 +1,4 @@
 {
-    "user": {
-      "name": "Bob",
-      "age": null,
-      "active": true,
-      "scores": [95, 88, 76]
-    }
-  }
-  
+  " movie ": " Inception " ,
+  " genres ": [" Action " , " Sci - Fi " , " Thriller "]
+}

@@ -1,5 +1,5 @@
 
-#line 3 "lex.yy.c"
+#line 2 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -470,8 +470,8 @@ int line = 1;
 int col = 1;
 
 extern YYSTYPE yylval;  
+#line 473 "lex.yy.c"
 #line 474 "lex.yy.c"
-#line 475 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -691,7 +691,7 @@ YY_DECL
 #line 13 "scanner.l"
 
 
-#line 695 "lex.yy.c"
+#line 694 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -835,7 +835,7 @@ YY_RULE_SETUP
 #line 46 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 839 "lex.yy.c"
+#line 838 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

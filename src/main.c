@@ -2,7 +2,7 @@
 #include <string.h>
 #include "ast.h"
 #include "symbol_table.h"
-//#include "csv-writer.h"  // Include the new header
+#include "csv-writer.h"  // Include the new header
 
 extern int yyparse();
 extern ASTNode* rootNode;
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
         }
 
         if (saveCsv) {
-            //saveSymbolTableToCSV("symbol_table.csv");  // Save symbol table to CSV
+            saveSymbolTableToCSV("symbol_table.csv");  // Save symbol table to CSV
         }
 
     } else {
