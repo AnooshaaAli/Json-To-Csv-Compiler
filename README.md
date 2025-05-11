@@ -8,14 +8,14 @@ This tool converts any valid **JSON file** into **relational CSV files**, follow
 
 ## Features
 
-* ✅ Parses **valid JSON up to 30 MiB**
-* ✅ Builds a persistent **Abstract Syntax Tree (AST)**
-* ✅ Follows defined **conversion rules** for normalization
-* ✅ Streams **CSV output** directly without large memory buffers
-* ✅ Tracks **line and column** for error messages
-* ✅ Optional flag to **print AST**
-* ✅ Generates one `.csv` file per relational table
-* ✅ Memory-safe C code
+* Parses **valid JSON up to 30 MiB**
+* Builds a persistent **Abstract Syntax Tree (AST)**
+* Follows defined **conversion rules** for normalization
+* Streams **CSV output** directly without large memory buffers
+* Tracks **line and column** for error messages
+* Optional flag to **print AST**
+* Generates one `.csv` file per relational table
+* Memory-safe C code
 
 ---
 
