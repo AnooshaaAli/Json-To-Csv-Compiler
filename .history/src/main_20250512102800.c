@@ -11,8 +11,8 @@ int main(int argc, char** argv) {
     int printAst = 0;
     int printSymbolTbl = 0;
     char* outDir = NULL;
-    char* inputFile = NULL;
 
+    // Parse command-line arguments
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--print-ast") == 0) {
             printAst = 1;
@@ -25,40 +25,13 @@ int main(int argc, char** argv) {
                 fprintf(stderr, "Error: --out-dir requires a directory argument\n");
                 return 1;
             }
-        } else if (argv[i][0] != '-') {
-            if (inputFile) {
-                fprintf(stderr, "Error: Only one input file can be specified\n");
-                return 1;
-            }
-            inputFile = argv[i];
         } else {
             fprintf(stderr, "Warning: Unknown argument '%s'\n", argv[i]);
         }
     }
 
-    FILE* input = stdin;
-    if (inputFile) {
-        input = fopen(inputFile, "r");
-        if (!input) {
-            fprintf(stderr, "Error: Could not open input file '%s'\n", inputFile);
-            return 1;
-        }
-        if (freopen(inputFile, "r", stdin) == NULL) {
-            fprintf(stderr, "Error: Failed to redirect input from '%s'\n", inputFile);
-            fclose(input);
-            return 1;
-        }
-        fclose(input);
-    }
-
-    printf("Debug: Starting yyparse\n");
-    int parseResult = yyparse();
-    printf("Debug: yyparse completed, result=%d, rootNode=%p\n", parseResult, (void*)rootNode);
-
-    if (parseResult == 0 && rootNode != NULL) {
-        printf("Debug: Root node type=%s, childCount=%d\n",
-               rootNode->type, rootNode->childCount);
-
+    if (yyparse() == 0 && rootNode != NULL) {
+        // Build symbol table
         walkAST(rootNode, NULL, 0);
 
         if (printAst) {
@@ -76,6 +49,8 @@ int main(int argc, char** argv) {
             saveSymbolTableToCSV(outDir);
         }
 
+        // Clean up
+        freeSymbolTables();
     } else {
         fprintf(stderr, "Parsing failed.\n");
         return 1;

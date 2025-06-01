@@ -3,9 +3,9 @@
 #include <string.h>
 #include "symbol_table.h"
 
-Table* tables[MAX_TABLES] = {0};
+Table* tables[MAX_TABLES] = {0}; // Definition of the tables array
 int tableCount = 0;
-int idCounter = 1;
+int idCounter = 1; // Start IDs at 1 per assignment examples
 
 void report_error(const char* message, const char* context, const char* node_type) {
     fprintf(stderr, "Error: %s (Context: %s, Node Type: %s)\n",
@@ -22,9 +22,11 @@ char* generateSchemaKey(ASTNode* node) {
         return strdup("default");
     }
 
+    // Collect all keys in the object, sorted to ensure consistent schema
     char** key_list = NULL;
     int key_count = 0;
 
+    // Check if object has a "members" child
     ASTNode* members = NULL;
     for (int i = 0; i < node->childCount; i++) {
         if (node->children[i] && strcmp(node->children[i]->type, "members") == 0) {
@@ -37,6 +39,7 @@ char* generateSchemaKey(ASTNode* node) {
         return strdup("default");
     }
 
+    // Collect keys from pair nodes under members
     for (int i = 0; i < members->childCount; i++) {
         ASTNode* child = members->children[i];
         if (child && strcmp(child->type, "pair") == 0 && child->strVal) {
@@ -45,6 +48,7 @@ char* generateSchemaKey(ASTNode* node) {
         }
     }
 
+    // Sort keys for consistent schema key
     for (int i = 0; i < key_count - 1; i++) {
         for (int j = i + 1; j < key_count; j++) {
             if (strcmp(key_list[i], key_list[j]) > 0) {
@@ -55,10 +59,11 @@ char* generateSchemaKey(ASTNode* node) {
         }
     }
 
+    // Concatenate keys with commas
     char* keys = NULL;
     size_t keys_len = 0;
     for (int i = 0; i < key_count; i++) {
-        size_t new_len = keys_len + strlen(key_list[i]) + 2;
+        size_t new_len = keys_len + strlen(key_list[i]) + 2; // +2 for comma and null
         char* new_keys = realloc(keys, new_len);
         if (!new_keys) {
             report_error("Memory allocation failed", "generateSchemaKey", node->type);
@@ -90,6 +95,7 @@ Table* findOrCreateTable(const char* schemaKey, const char* tableName, const cha
         schemaKey = "default";
     }
 
+    // Check if table exists with same schemaKey
     for (int i = 0; i < tableCount; i++) {
         if (tables[i] && tables[i]->schemaKey && strcmp(tables[i]->schemaKey, schemaKey) == 0) {
             return tables[i];
@@ -146,7 +152,6 @@ void addRow(Table* t, Row* row) {
 }
 
 void walkAST(ASTNode* node, const char* parentTable, int parentId) {
-    static int objectCount = 0;
     if (!node || !node->type) {
         report_error("NULL node or type", "walkAST", NULL);
         return;
@@ -156,14 +161,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
            node->type, parentTable ? parentTable : "none", parentId);
 
     if (strcmp(node->type, "object") == 0) {
-        if (parentTable == NULL) {
-            objectCount++;
-            printf("Debug: Processing top-level object #%d\n", objectCount);
-            if (objectCount > 1) {
-                fprintf(stderr, "Warning: Multiple top-level objects detected\n");
-            }
-        }
-
+        // Find the "members" node
         ASTNode* members = NULL;
         for (int i = 0; i < node->childCount; i++) {
             if (node->children[i] && strcmp(node->children[i]->type, "members") == 0) {
@@ -177,12 +175,14 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
             return;
         }
 
+        // Generate schema key based on object keys
         char* schemaKey = generateSchemaKey(node);
         if (!schemaKey) {
             report_error("Failed to generate schema key", "walkAST", node->type);
             return;
         }
 
+        // Determine table name
         char* tableName = parentTable ? strdup(parentTable) : strdup("objects");
         if (!tableName) {
             report_error("Memory allocation failed for table name", "walkAST", node->type);
@@ -198,6 +198,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
             return;
         }
 
+        // Create a row for the object
         Row* row = malloc(sizeof(Row));
         if (!row) {
             report_error("Memory allocation failed for row", "walkAST", node->type);
@@ -235,6 +236,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
             printf("Debug: Processing pair key=%s, value type=%s\n",
                    child->strVal, valNode->type);
 
+            // Resize keys and values arrays
             row->keys = realloc(row->keys, sizeof(char*) * (row->keyCount + 1));
             row->values = realloc(row->values, sizeof(char*) * (row->keyCount + 1));
             if (!row->keys || !row->values) {
@@ -248,6 +250,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 return;
             }
 
+            // Store key
             row->keys[row->keyCount] = strdup(child->strVal);
             if (!row->keys[row->keyCount]) {
                 report_error("Memory allocation failed for key", "walkAST", node->type);
@@ -260,9 +263,10 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 return;
             }
 
+            // Store value
             if (strcmp(valNode->type, "object") == 0 || strcmp(valNode->type, "array") == 0) {
                 row->values[row->keyCount] = strdup("");
-                walkAST(valNode, child->strVal, row->id);
+                walkAST(valNode, child->strVal, row->id); // Recurse with key as new parent table
             } else {
                 if (valNode->strVal) {
                     row->values[row->keyCount] = strdup(valNode->strVal);
@@ -304,12 +308,14 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
         }
         free(schemaKey);
         free(tableName);
-    } else if (strcmp(node->type, "array") == 0) {
+    }
+    else if (strcmp(node->type, "array") == 0) {
         if (!parentTable) {
             report_error("NULL parentTable for array", "walkAST", node->type);
             return;
         }
 
+        // Determine if array contains objects or scalars
         int isObjectArray = 0;
         for (int i = 0; i < node->childCount; i++) {
             if (node->children[i] && strcmp(node->children[i]->type, "object") == 0) {
@@ -322,6 +328,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                isObjectArray, node->childCount);
 
         if (isObjectArray) {
+            // R2: Array of objects -> child table
             for (int i = 0; i < node->childCount; i++) {
                 ASTNode* child = node->children[i];
                 if (!child || strcmp(child->type, "object") != 0) {
@@ -350,6 +357,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 row->keys = NULL;
                 row->values = NULL;
 
+                // Add seq column for array index
                 row->keys = realloc(row->keys, sizeof(char*) * (row->keyCount + 1));
                 row->values = realloc(row->values, sizeof(char*) * (row->keyCount + 1));
                 if (!row->keys || !row->values) {
@@ -376,6 +384,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 }
                 row->keyCount++;
 
+                // Process object fields
                 for (int j = 0; j < child->childCount; j++) {
                     ASTNode* pair = child->children[j];
                     if (!pair || strcmp(pair->type, "pair") != 0 || !pair->strVal || pair->childCount != 1) {
@@ -425,7 +434,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                     row->keyCount++;
                 }
 
-                if (row->keyCount == 1) {
+                if (row->keyCount == 1) { // Only seq, no other fields
                     printf("Debug: No fields added to array object row ID %d in table %s\n",
                            row->id, table->name);
                     free(row->keys[0]);
@@ -440,15 +449,9 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 free(schemaKey);
             }
         } else {
+            // R3: Array of scalars -> junction table
             char* schemaKey = strdup(parentTable);
-            const char* grandparentName = NULL;
-            for (int i = 0; i < tableCount; i++) {
-                if (tables[i] && tables[i]->name && strcmp(tables[i]->name, parentTable) == 0) {
-                    grandparentName = tables[i]->parentName;
-                    break;
-                }
-            }
-            Table* table = findOrCreateTable(schemaKey, parentTable, grandparentName ? grandparentName : "objects");
+            Table* table = findOrCreateTable(schemaKey, parentTable, parentTable);
             if (!table) {
                 free(schemaKey);
                 return;
@@ -470,7 +473,7 @@ void walkAST(ASTNode* node, const char* parentTable, int parentId) {
                 row->id = idCounter++;
                 row->parentId = parentId;
                 row->tableName = strdup(table->name);
-                row->keyCount = 2;
+                row->keyCount = 2; // index, value
                 row->keys = malloc(sizeof(char*) * 2);
                 row->values = malloc(sizeof(char*) * 2);
                 if (!row->tableName || !row->keys || !row->values) {

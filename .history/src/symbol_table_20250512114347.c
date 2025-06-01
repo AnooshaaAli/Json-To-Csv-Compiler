@@ -146,7 +146,7 @@ void addRow(Table* t, Row* row) {
 }
 
 void walkAST(ASTNode* node, const char* parentTable, int parentId) {
-    static int objectCount = 0;
+    static int objectCount = 0; // Track number of top-level objects processed
     if (!node || !node->type) {
         report_error("NULL node or type", "walkAST", NULL);
         return;

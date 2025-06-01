@@ -72,7 +72,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"  
-#include "symbol_table.h"  // Add this to include symbol table functionality
+#include "symbol_table.h"
 
 extern int yylex();
 extern int yylineno;
@@ -523,8 +523,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    49,    50,    51,    52,    53,    54,    55,
-      59,    63,    70,    71,    75,    82,    85,    95,   100
+       0,    41,    41,    48,    49,    50,    51,    52,    53,    54,
+      58,    62,    68,    69,    73,    80,    83,    93,    97
 };
 #endif
 
@@ -1097,103 +1097,102 @@ yyreduce:
   case 2: /* json: value  */
 #line 41 "parser.y"
           {
-        printf("JSON parsed successfully!\n");
+        printf("Debug: JSON parsed successfully, setting rootNode\n");
         rootNode = (yyvsp[0].ast); 
-        walkAST(rootNode, NULL, 0); // Call walkAST to populate symbol tables
     }
-#line 1105 "parser.tab.c"
+#line 1104 "parser.tab.c"
     break;
 
   case 3: /* value: STRING  */
-#line 49 "parser.y"
+#line 48 "parser.y"
                     { (yyval.ast) = createStrNode("string", (yyvsp[0].strVal)); }
-#line 1111 "parser.tab.c"
+#line 1110 "parser.tab.c"
     break;
 
   case 4: /* value: NUMBER  */
-#line 50 "parser.y"
+#line 49 "parser.y"
                     { (yyval.ast) = createIntNode("number", (yyvsp[0].intVal)); }
-#line 1117 "parser.tab.c"
+#line 1116 "parser.tab.c"
     break;
 
   case 5: /* value: TRUE  */
-#line 51 "parser.y"
-                     { (yyval.ast) = createBoolNode("bool", 1); (yyval.ast)->hasBool = 1; }
-#line 1123 "parser.tab.c"
+#line 50 "parser.y"
+                    { (yyval.ast) = createBoolNode("bool", 1); (yyval.ast)->hasBool = 1; }
+#line 1122 "parser.tab.c"
     break;
 
   case 6: /* value: FALSE  */
-#line 52 "parser.y"
-                     { (yyval.ast) = createBoolNode("bool", 0); (yyval.ast)->hasBool = 1; }
-#line 1129 "parser.tab.c"
+#line 51 "parser.y"
+                    { (yyval.ast) = createBoolNode("bool", 0); (yyval.ast)->hasBool = 1; }
+#line 1128 "parser.tab.c"
     break;
 
   case 7: /* value: NULLTOK  */
-#line 53 "parser.y"
+#line 52 "parser.y"
                     { (yyval.ast) = createNode("null"); }
-#line 1135 "parser.tab.c"
+#line 1134 "parser.tab.c"
     break;
 
   case 8: /* value: object  */
-#line 54 "parser.y"
+#line 53 "parser.y"
                     { (yyval.ast) = (yyvsp[0].ast); }
-#line 1141 "parser.tab.c"
+#line 1140 "parser.tab.c"
     break;
 
   case 9: /* value: array  */
-#line 55 "parser.y"
+#line 54 "parser.y"
                     { (yyval.ast) = (yyvsp[0].ast); }
-#line 1147 "parser.tab.c"
+#line 1146 "parser.tab.c"
     break;
 
   case 10: /* object: LEFT_BRACE members RIGHT_BRACE  */
-#line 59 "parser.y"
+#line 58 "parser.y"
                                    { 
         (yyval.ast) = createNode("object"); 
         addChild((yyval.ast), (yyvsp[-1].ast)); 
     }
-#line 1156 "parser.tab.c"
+#line 1155 "parser.tab.c"
     break;
 
   case 11: /* object: LEFT_BRACE RIGHT_BRACE  */
-#line 63 "parser.y"
+#line 62 "parser.y"
                                    { 
         (yyval.ast) = createNode("empty_object"); 
     }
-#line 1164 "parser.tab.c"
+#line 1163 "parser.tab.c"
     break;
 
   case 12: /* members: pair  */
-#line 70 "parser.y"
+#line 68 "parser.y"
                         { (yyval.ast) = createNode("members"); addChild((yyval.ast), (yyvsp[0].ast)); }
-#line 1170 "parser.tab.c"
+#line 1169 "parser.tab.c"
     break;
 
   case 13: /* members: members COMMA pair  */
-#line 71 "parser.y"
+#line 69 "parser.y"
                         { (yyval.ast) = (yyvsp[-2].ast); addChild((yyval.ast), (yyvsp[0].ast)); }
-#line 1176 "parser.tab.c"
+#line 1175 "parser.tab.c"
     break;
 
   case 14: /* pair: STRING COLON value  */
-#line 75 "parser.y"
+#line 73 "parser.y"
                        {
         (yyval.ast) = createStrNode("pair", (yyvsp[-2].strVal));
         addChild((yyval.ast), (yyvsp[0].ast));
     }
-#line 1185 "parser.tab.c"
+#line 1184 "parser.tab.c"
     break;
 
   case 15: /* array: LEFT_BRACKET RIGHT_BRACKET  */
-#line 82 "parser.y"
-                                 {
+#line 80 "parser.y"
+                               {
         (yyval.ast) = createNode("array");
     }
-#line 1193 "parser.tab.c"
+#line 1192 "parser.tab.c"
     break;
 
   case 16: /* array: LEFT_BRACKET elements RIGHT_BRACKET  */
-#line 85 "parser.y"
+#line 83 "parser.y"
                                           {
         (yyval.ast) = createNode("array");
         for (int i = 0; i < (yyvsp[-1].ast)->childCount; i++) {
@@ -1201,30 +1200,29 @@ yyreduce:
         }
         free((yyvsp[-1].ast));
     }
-#line 1205 "parser.tab.c"
+#line 1204 "parser.tab.c"
     break;
 
   case 17: /* elements: value  */
-#line 95 "parser.y"
-            {
-        // printf("Parsed value: %s\n", $1->strVal);
+#line 93 "parser.y"
+          {
         (yyval.ast) = createNode("elements");
         addChild((yyval.ast), (yyvsp[0].ast));
     }
-#line 1215 "parser.tab.c"
+#line 1213 "parser.tab.c"
     break;
 
   case 18: /* elements: elements COMMA value  */
-#line 100 "parser.y"
+#line 97 "parser.y"
                            { 
         addChild((yyvsp[-2].ast), (yyvsp[0].ast));
         (yyval.ast) = (yyvsp[-2].ast);
     }
-#line 1224 "parser.tab.c"
+#line 1222 "parser.tab.c"
     break;
 
 
-#line 1228 "parser.tab.c"
+#line 1226 "parser.tab.c"
 
       default: break;
     }
@@ -1417,7 +1415,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 106 "parser.y"
+#line 103 "parser.y"
 
 
 void yyerror(const char *s) {

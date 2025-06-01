@@ -76,6 +76,8 @@ int main(int argc, char** argv) {
             saveSymbolTableToCSV(outDir);
         }
 
+        freeAST(rootNode);
+        freeSymbolTables();
     } else {
         fprintf(stderr, "Parsing failed.\n");
         return 1;
